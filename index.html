@@ -71,6 +71,12 @@ canvas{
   box-shadow:
     0 8px 22px rgba(0,0,0,.28),
     inset 0 0 0 1px rgba(217,179,95,.35);
+  transition:.35s ease;
+}
+
+.game-wrap.playing .logo-top{
+  opacity:.58;
+  transform:translateX(-50%) scale(.86);
 }
 
 .logo-top img{
@@ -127,14 +133,16 @@ canvas{
 #modeCard{
   text-align:right;
   transition:.2s ease;
+  min-width:152px;
 }
 
 #modeText{
   font-family:Arial,sans-serif;
-  font-size:13px;
+  font-size:12px;
   font-weight:900;
   color:rgba(246,234,208,.72);
-  letter-spacing:.06em;
+  letter-spacing:.045em;
+  line-height:1.2;
 }
 
 #modeCard.active{
@@ -148,6 +156,25 @@ canvas{
 #modeCard.active #modeText{
   color:#74e5ee;
   text-shadow:0 0 14px rgba(116,229,238,.65);
+}
+
+.intensity-shell{
+  height:6px;
+  width:100%;
+  border-radius:999px;
+  margin-top:8px;
+  overflow:hidden;
+  background:rgba(246,234,208,.16);
+  box-shadow:inset 0 0 0 1px rgba(246,234,208,.08);
+}
+
+#intensityBar{
+  width:0%;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#d9b35f,#74e5ee,#ffb35c);
+  box-shadow:0 0 12px rgba(116,229,238,.5);
+  transition:width .08s linear;
 }
 
 .panel{
@@ -328,6 +355,11 @@ button:active{
   font-size:10px;
   text-transform:uppercase;
   letter-spacing:.1em;
+  transition:.6s ease;
+}
+
+.game-wrap.playing .footer{
+  opacity:.48;
 }
 
 .pill{
@@ -366,6 +398,10 @@ button:active{
     min-width:104px;
   }
 
+  #modeCard{
+    min-width:126px;
+  }
+
   #score{
     font-size:22px;
   }
@@ -375,7 +411,7 @@ button:active{
   }
 
   #modeText{
-    font-size:12px;
+    font-size:11px;
   }
 
   .footer{
@@ -408,22 +444,25 @@ button:active{
 
       <div class="topbar">
         <div class="card">
-          <div class="label">Aging Score</div>
-          <div id="score">0 years</div>
-          <div id="tier">Young Rum</div>
+          <div class="label">Añejamiento</div>
+          <div id="score">0 años</div>
+          <div id="tier">Primer añejamiento</div>
         </div>
 
         <div class="card" id="modeCard">
-          <div class="label">Aging Mode</div>
-          <div id="modeText">HOLD TO AGE</div>
+          <div class="label">Modo Maestría</div>
+          <div id="modeText">Mantén para intensificar</div>
+          <div class="intensity-shell">
+            <div id="intensityBar"></div>
+          </div>
         </div>
       </div>
 
-      <div id="banner">Perfect pass</div>
+      <div id="banner">Paso perfecto</div>
 
       <div class="footer">
-        <div class="pill">Tap: Subir</div>
-        <div class="pill">Mantén: Aging Mode</div>
+        <div class="pill">Toque: Guiar</div>
+        <div class="pill">Mantén: Intensificar</div>
       </div>
 
       <div class="panel" id="startScreen">
@@ -433,21 +472,21 @@ button:active{
 
         <div class="brand">Valle de Carúpano · Venezuela</div>
 
-        <h1>Maestra<br>Ronera</h1>
+        <h1>El Arte del<br>Añejamiento</h1>
 
         <p class="subtitle">
           Guía a Carmen López de Bastidas, Maestra Ronera de Ron Carúpano, por la costa oriental venezolana, los cañaverales, la destilería y la cava.
-          El reto es crear el añejamiento perfecto.
+          Cada toque representa precisión, tiempo y maestría.
         </p>
 
         <div class="button-row">
           <button id="startButton">Comenzar</button>
-          <button class="secondary" id="soundButton">Sound On</button>
+          <button class="secondary" id="soundButton">Sonido On</button>
         </div>
 
         <div class="instructions">
-          <div class="tip"><strong>Tap / Click</strong><br>Subida suave y precisa</div>
-          <div class="tip"><strong>Hold</strong><br>Más añejamiento, más riesgo</div>
+          <div class="tip"><strong>Toque / Click</strong><br>Guía suavemente hacia arriba</div>
+          <div class="tip"><strong>Mantén</strong><br>Intensifica el añejamiento, pero exige precisión</div>
         </div>
       </div>
 
@@ -456,19 +495,19 @@ button:active{
           <img src="https://roncarupano.com/wp-content/uploads/2024/10/Ron-Carupano-Logo-azul-oscuro-1.png.webp" alt="Ron Carúpano">
         </div>
 
-        <div class="brand" id="gameOverTitle">Carmen López de Bastidas</div>
+        <div class="brand" id="gameOverTitle">Carmen López de Bastidas, Maestra Ronera</div>
 
-        <h1 id="finalScore">Aged to 0 years</h1>
+        <h1 id="finalScore">Añejado 0 años</h1>
 
         <p class="subtitle" id="finalText">
-          Cada gran ron empieza con práctica. Acompaña a Carmen López de Bastidas e inténtalo de nuevo.
+          Cada gran ron empieza con paciencia. Inténtalo de nuevo y acompaña mejor el proceso.
         </p>
 
-        <div class="best-score" id="finalBest">Best aging: 0 years</div>
+        <div class="best-score" id="finalBest">Mejor añejamiento: 0 años</div>
 
         <div class="button-row">
           <button id="restartButton">Volver a añejar</button>
-          <button class="secondary" id="muteButton">Sound On</button>
+          <button class="secondary" id="muteButton">Sonido On</button>
         </div>
       </div>
     </div>
@@ -477,6 +516,24 @@ button:active{
 
 <script>
 (() => {
+const CONFIG={
+  baseSpeed:112,
+  maxSpeed:270,
+  minGap:154,
+  maxGap:232,
+  minSpacing:188,
+  maxSpacing:325,
+  scoreNormalRate:.22,
+  scoreAgingRate:.38,
+  jumpVelocity:-325,
+  baseGravity:750,
+  agingGravity:860,
+  agingLift:-450,
+  difficultyCap:34,
+  storageKey:"ronCarupanoBest",
+  logoUrl:"https://roncarupano.com/wp-content/uploads/2024/10/Ron-Carupano-Logo-azul-oscuro-1.png.webp"
+};
+
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 const wrap=document.getElementById("gameWrap");
@@ -485,6 +542,7 @@ const scoreEl=document.getElementById("score");
 const tierEl=document.getElementById("tier");
 const modeCard=document.getElementById("modeCard");
 const modeText=document.getElementById("modeText");
+const intensityBar=document.getElementById("intensityBar");
 const banner=document.getElementById("banner");
 
 const startScreen=document.getElementById("startScreen");
@@ -515,12 +573,14 @@ const state={
   just:false,
   muted:false,
   score:0,
-  best:+localStorage.getItem("ronCarupanoBestV12")||0,
+  best:+localStorage.getItem(CONFIG.storageKey)||0,
   difficulty:0,
   shake:0,
   milestone:0,
   scene:0,
-  blend:0
+  blend:0,
+  agingPower:0,
+  agingHold:0
 };
 
 const player={
@@ -541,14 +601,11 @@ function resize(){
   W=r.width|0;
   H=r.height|0;
   DPR=Math.max(1,Math.min(2,devicePixelRatio||1));
-
   canvas.width=W*DPR;
   canvas.height=H*DPR;
   canvas.style.width=W+"px";
   canvas.style.height=H+"px";
-
   ctx.setTransform(DPR,0,0,DPR,0,0);
-
   player.x=Math.max(92,W*.27);
 }
 
@@ -564,7 +621,7 @@ function initAudio(){
   audioCtx=new AC();
 
   const master=audioCtx.createGain();
-  master.gain.value=.18;
+  master.gain.value=.16;
   master.connect(audioCtx.destination);
 
   const hum=audioCtx.createOscillator();
@@ -573,11 +630,10 @@ function initAudio(){
   const lg=audioCtx.createGain();
 
   hum.type="sine";
-  hum.frequency.value=82;
-  g.gain.value=.012;
-
-  lfo.frequency.value=.12;
-  lg.gain.value=.006;
+  hum.frequency.value=78;
+  g.gain.value=.011;
+  lfo.frequency.value=.09;
+  lg.gain.value=.005;
 
   hum.connect(g);
   g.connect(master);
@@ -592,76 +648,91 @@ function initAudio(){
 
 function setMuted(v){
   state.muted=v;
-  if(ambient)ambient.gain.value=v?0:.18;
-  soundButton.textContent=muteButton.textContent=v?"Sound Off":"Sound On";
+  if(ambient)ambient.gain.value=v?0:.16;
+  soundButton.textContent=muteButton.textContent=v?"Sonido Off":"Sonido On";
 }
 
-function tone(f,d,type="sine",vol=.04,slide){
+function tone(f,d,type="sine",vol=.035,slide,filter){
   if(!audioCtx||state.muted)return;
 
   const n=audioCtx.currentTime;
   const o=audioCtx.createOscillator();
   const g=audioCtx.createGain();
+  const out=filter?audioCtx.createBiquadFilter():null;
 
   o.type=type;
   o.frequency.setValueAtTime(f,n);
   if(slide)o.frequency.exponentialRampToValueAtTime(slide,n+d);
 
   g.gain.setValueAtTime(.0001,n);
-  g.gain.exponentialRampToValueAtTime(vol,n+.012);
+  g.gain.exponentialRampToValueAtTime(vol,n+.018);
   g.gain.exponentialRampToValueAtTime(.0001,n+d);
 
-  o.connect(g);
+  if(out){
+    out.type="lowpass";
+    out.frequency.value=filter;
+    o.connect(out);
+    out.connect(g);
+  }else{
+    o.connect(g);
+  }
+
   g.connect(audioCtx.destination);
 
   o.start(n);
   o.stop(n+d+.04);
 }
 
-function noise(d=.18,v=.08){
+function woodTap(){
   if(!audioCtx||state.muted)return;
 
-  const b=audioCtx.createBuffer(1,audioCtx.sampleRate*d,audioCtx.sampleRate);
+  const n=audioCtx.currentTime;
+  const b=audioCtx.createBuffer(1,audioCtx.sampleRate*.045,audioCtx.sampleRate);
   const data=b.getChannelData(0);
 
-  for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;
+  for(let i=0;i<data.length;i++){
+    data[i]=(Math.random()*2-1)*(1-i/data.length);
+  }
 
   const s=audioCtx.createBufferSource();
   const f=audioCtx.createBiquadFilter();
   const g=audioCtx.createGain();
 
-  f.type="lowpass";
-  f.frequency.value=460;
-  g.gain.value=v;
-  g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+d);
+  f.type="bandpass";
+  f.frequency.value=520;
+  f.Q.value=5;
+
+  g.gain.setValueAtTime(.045,n);
+  g.gain.exponentialRampToValueAtTime(.0001,n+.08);
 
   s.buffer=b;
   s.connect(f);
   f.connect(g);
   g.connect(audioCtx.destination);
 
-  s.start();
-  s.stop(audioCtx.currentTime+d);
+  s.start(n);
+  s.stop(n+.09);
 }
 
 const sound={
   jump(){
-    tone(300,.08,"triangle",.05,440);
+    woodTap();
+    tone(260,.07,"triangle",.025,360,1200);
   },
   score(){
-    tone(470,.08,"sine",.035,650);
-    setTimeout(()=>tone(730,.1,"triangle",.028,940),45);
+    tone(440,.08,"sine",.026,620);
+    setTimeout(()=>tone(690,.12,"triangle",.024,880),45);
   },
   aging(){
-    tone(128,.12,"sawtooth",.015,180);
+    tone(118,.14,"triangle",.012,150,900);
   },
   crash(){
-    noise();
-    tone(180,.18,"square",.035,70);
+    woodTap();
+    tone(150,.2,"triangle",.035,72,650);
   },
   milestone(){
-    tone(390,.08,"sine",.035,570);
-    setTimeout(()=>tone(690,.13,"triangle",.04,980),80);
+    tone(390,.09,"sine",.03,560);
+    setTimeout(()=>tone(690,.14,"triangle",.035,960),80);
   }
 };
 
@@ -674,7 +745,9 @@ function reset(){
     shake:0,
     milestone:0,
     scene:0,
-    blend:0
+    blend:0,
+    agingPower:0,
+    agingHold:0
   });
 
   Object.assign(player,{
@@ -696,9 +769,11 @@ function reset(){
 
   startScreen.classList.add("hidden");
   gameOverScreen.classList.add("hidden");
+  wrap.classList.add("playing");
 
-  scoreEl.textContent="0 years";
-  tierEl.textContent="Young Rum";
+  scoreEl.textContent="0 años";
+  tierEl.textContent="Primer añejamiento";
+  intensityBar.style.width="0%";
 }
 
 function start(){
@@ -714,6 +789,7 @@ function endGame(){
   state.phase="over";
   player.mood="crash";
   state.shake=10;
+  wrap.classList.remove("playing");
 
   sound.crash();
 
@@ -732,14 +808,14 @@ function endGame(){
 
   const y=Math.floor(state.score);
   state.best=Math.max(state.best,y);
-  localStorage.setItem("ronCarupanoBestV12",state.best);
+  localStorage.setItem(CONFIG.storageKey,state.best);
 
   const result=getResultMessage(y);
 
   gameOverTitle.textContent=result.title;
   finalScore.textContent=result.headline;
   finalText.innerHTML=result.body;
-  finalBest.innerHTML="Best aging: <strong>"+state.best+" years</strong>";
+  finalBest.innerHTML="Mejor añejamiento: <strong>"+state.best+" años</strong>";
 
   setTimeout(()=>gameOverScreen.classList.remove("hidden"),520);
 }
@@ -747,69 +823,69 @@ function endGame(){
 function getResultMessage(years){
   if(years>=24){
     return {
-      title:"Añejamiento extraordinario",
-      headline:"Aged to "+years+" years",
-      body:"Carmen López de Bastidas ha guiado una creación excepcional. El reto ahora es repetir la maestría."
+      title:"Obra maestra del añejamiento",
+      headline:"Añejado "+years+" años",
+      body:"Una creación excepcional inspirada en Carmen López de Bastidas, Maestra Ronera. El reto ahora es repetir esa maestría."
     };
   }
 
   if(years>=20){
     return {
-      title:"Reserva legendaria",
-      headline:"Aged to "+years+" years",
-      body:"Con la ayuda de Carmen López de Bastidas, alcanzaste un añejamiento digno de una gran reserva."
+      title:"Reserva 20 años",
+      headline:"Añejado "+years+" años",
+      body:"Has acompañado a Carmen López de Bastidas, Maestra Ronera, en un añejamiento digno de una gran reserva."
     };
   }
 
   if(years>=16){
     return {
-      title:"Maestría Ronera",
-      headline:"Aged to "+years+" years",
-      body:"Excelente trabajo. Carmen López de Bastidas está muy cerca de lograr el añejamiento perfecto."
+      title:"Reserva Especial",
+      headline:"Añejado "+years+" años",
+      body:"La precisión y el tiempo empiezan a revelar un ron de carácter extraordinario."
     };
   }
 
   if(years>=12){
     return {
-      title:"Reserva prometedora",
-      headline:"Aged to "+years+" years",
-      body:"Muy buen avance. Ayudaste a Carmen López de Bastidas a crear un ron con carácter y profundidad."
+      title:"Gran Añejo",
+      headline:"Añejado "+years+" años",
+      body:"Un resultado prometedor: profundidad, carácter y paciencia en cada decisión."
     };
   }
 
   if(years>=8){
     return {
-      title:"Buen añejamiento",
-      headline:"Aged to "+years+" years",
-      body:"Vas por buen camino. Carmen López de Bastidas necesita precisión para llevar este ron más lejos."
+      title:"La madera despierta",
+      headline:"Añejado "+years+" años",
+      body:"Vas por buen camino. Cada toque cuenta en el arte de crear un ron memorable."
     };
   }
 
   if(years>=4){
     return {
-      title:"Buen inicio",
-      headline:"Aged to "+years+" years",
-      body:"El proceso ha comenzado. Ayuda a Carmen López de Bastidas a refinar el arte del añejamiento."
+      title:"Primeros aromas",
+      headline:"Añejado "+years+" años",
+      body:"El proceso comienza a tomar forma. Sigue refinando el tiempo y la precisión."
     };
   }
 
   return {
-    title:"Primer añejamiento",
-    headline:"Aged to "+years+" years",
-    body:"Cada gran ron empieza con práctica. Acompaña a Carmen López de Bastidas e inténtalo de nuevo."
+    title:"Primer intento",
+    headline:"Añejado "+years+" años",
+    body:"Todo gran ron empieza con paciencia. Inténtalo de nuevo y acompaña mejor el proceso."
   };
 }
 
 function spawnObstacle(x,gap){
   const d=state.difficulty;
-
-  gap=gap||clamp(H*.32-d*3.6,158,228);
+  gap=gap||clamp(H*.32-d*3.6,CONFIG.minGap,CONFIG.maxGap);
 
   const c=rand(138+gap/2,H-124-gap/2);
+  const scene=state.scene;
 
   let type="wood";
-  if(state.score>7&&Math.random()>.62)type="copper";
-  if(state.score>14&&Math.random()>.72)type="cellar";
+  if(scene===1)type="copper";
+  if(scene===2)type="cellar";
 
   obstacles.push({
     x,
@@ -825,12 +901,23 @@ function spawnObstacle(x,gap){
 }
 
 function tier(y){
-  if(y>=20)return"20 Years Reserve";
+  if(y>=24)return"Obra Maestra";
+  if(y>=20)return"Reserva 20 años";
   if(y>=16)return"Reserva Especial";
-  if(y>=12)return"Premium";
+  if(y>=12)return"Gran Añejo";
   if(y>=8)return"Añejo";
-  if(y>=4)return"Reposado";
-  return"Young Rum";
+  if(y>=4)return"En maduración";
+  return"Primer añejamiento";
+}
+
+function milestoneTitle(y){
+  if(y>=24)return"Obra maestra";
+  if(y>=20)return"Añejamiento perfecto";
+  if(y>=16)return"Reserva especial";
+  if(y>=12)return"Carácter y profundidad";
+  if(y>=8)return"La madera despierta";
+  if(y>=4)return"Primeros aromas";
+  return"";
 }
 
 function bannerText(t){
@@ -845,9 +932,10 @@ function addText(t,x,y,c){
 }
 
 function milestone(y){
+  const title=milestoneTitle(y);
   sound.milestone();
-  bannerText(y+" years · "+tier(y));
-  addText(tier(y),W*.5,H*.31,"#f6ead0");
+  bannerText(y+" años · "+title);
+  addText(title,W*.5,H*.31,"#f6ead0");
 
   for(let i=0;i<32;i++){
     particle(
@@ -860,6 +948,15 @@ function milestone(y){
       1.2,
       true
     );
+  }
+}
+
+function precisionRelease(){
+  if(state.agingHold>=.35&&state.agingHold<=1.35&&state.agingPower<.78){
+    state.score+=.16;
+    bannerText("Añejamiento preciso");
+    addText("+ precisión",player.x+42,player.y-22,"#74e5ee");
+    sound.score();
   }
 }
 
@@ -878,8 +975,14 @@ function down(e){
 
 function up(e){
   if(e)e.preventDefault();
+
+  if(state.phase==="play"&&state.input){
+    precisionRelease();
+  }
+
   state.input=false;
   state.pressed=false;
+  state.agingHold=0;
 }
 
 addEventListener("pointerdown",down,{passive:false});
@@ -918,9 +1021,14 @@ function update(dt){
 
   const aging=state.phase==="play"&&state.input;
 
-  modeCard.classList.toggle("active",aging);
-  modeText.textContent=aging?"AGING FAST":"HOLD TO AGE";
+  if(aging){
+    state.agingPower=clamp(state.agingPower+dt*.62,0,1);
+    state.agingHold+=dt;
+  }else{
+    state.agingPower=clamp(state.agingPower-dt*.5,0,1);
+  }
 
+  updateModeUI(aging);
   updateBits(dt);
 
   if(state.phase==="start"){
@@ -936,16 +1044,28 @@ function update(dt){
     return;
   }
 
-  state.difficulty=Math.min(32,Math.pow(state.time/4.9,1.32));
+  const difficultySeed=state.score+state.time*.12;
+  state.difficulty=Math.min(CONFIG.difficultyCap,Math.pow(difficultySeed/4.7,1.25));
 
-  const speedBase=clamp(112+state.difficulty*7.2,112,265);
-  const speed=aging?speedBase*1.2:speedBase;
+  const speedBase=clamp(
+    CONFIG.baseSpeed+state.difficulty*7.4,
+    CONFIG.baseSpeed,
+    CONFIG.maxSpeed
+  );
 
-  const gravity=aging?830:750;
-  const lift=aging?-455:0;
+  const power=state.agingPower;
+  const speed=aging?speedBase*(1.15+power*.12):speedBase;
+
+  const gravity=aging
+    ? CONFIG.agingGravity+power*135
+    : CONFIG.baseGravity;
+
+  const lift=aging
+    ? CONFIG.agingLift+power*85
+    : 0;
 
   if(state.just){
-    player.vy=-325;
+    player.vy=CONFIG.jumpVelocity;
     player.squash=1.1;
     player.mood="jump";
     sound.jump();
@@ -966,9 +1086,9 @@ function update(dt){
 
   if(aging){
     player.vy+=lift*dt;
-    player.mood="focused";
+    player.mood=power>.75?"worried":"focused";
 
-    if(Math.random()<dt*8){
+    if(Math.random()<dt*(6+power*7)){
       particle(
         player.x-30,
         player.y+rand(-10,16),
@@ -984,21 +1104,21 @@ function update(dt){
     if(!update.lock){
       sound.aging();
       update.lock=1;
-      setTimeout(()=>update.lock=0,300);
+      setTimeout(()=>update.lock=0,330);
     }
   }
 
   player.vy+=gravity*dt;
-  player.vy=clamp(player.vy,-390,510);
+  player.vy=clamp(player.vy,-390,540);
   player.y+=player.vy*dt;
-  player.rot=clamp(player.vy/590,-.46,.7);
+  player.rot=clamp(player.vy/590,-.46,.75);
   player.squash+=(1-player.squash)*Math.min(1,dt*9);
 
-  state.score+=dt*(aging?.38:.22);
+  state.score+=dt*(aging?(CONFIG.scoreAgingRate+power*.07):CONFIG.scoreNormalRate);
 
   const years=Math.floor(state.score);
 
-  scoreEl.textContent=years+" year"+(years===1?"":"s");
+  scoreEl.textContent=years+" año"+(years===1?"":"s");
   tierEl.textContent=tier(years);
 
   const m=Math.floor(years/4)*4;
@@ -1008,8 +1128,7 @@ function update(dt){
     milestone(m);
   }
 
-  state.scene=Math.min(2,Math.floor(years/8));
-  state.blend=clamp((years%8)/8,0,1);
+  updateScene(years);
 
   let danger=999;
 
@@ -1023,9 +1142,9 @@ function update(dt){
 
     if(!ob.passed&&ob.x+ob.w<player.x-player.r*.2){
       ob.passed=true;
-      state.score+=.18;
+      state.score+=.16;
       sound.score();
-      addText("+ aged",player.x+42,player.y-25,"#d9b35f");
+      addText("+ tiempo",player.x+42,player.y-25,"#d9b35f");
     }
 
     if(player.x+player.r>ob.x&&player.x-player.r<ob.x+ob.w){
@@ -1040,10 +1159,10 @@ function update(dt){
 
       if(!ob.perfect&&Math.min(Math.abs(player.y-top),Math.abs(player.y-bottom))<20){
         ob.perfect=true;
-        state.score+=.35;
+        state.score+=.34;
         sound.score();
-        bannerText("Perfect pass · Extra aging");
-        addText("Perfect",ob.x+ob.w,player.y,"#74e5ee");
+        bannerText("Paso perfecto · añejamiento extra");
+        addText("Paso perfecto",ob.x+ob.w,player.y,"#74e5ee");
         rings.push({x:player.x,y:player.y,r:10,life:.6,max:.6});
       }
     }
@@ -1053,11 +1172,18 @@ function update(dt){
 
   while(obstacles.length<5){
     const last=obstacles.length?Math.max(...obstacles.map(o=>o.x)):W;
-    const spacing=clamp(325-state.difficulty*8.4,195,325);
+    const spacing=clamp(
+      CONFIG.maxSpacing-state.difficulty*8.6,
+      CONFIG.minSpacing,
+      CONFIG.maxSpacing
+    );
+
     spawnObstacle(last+spacing+rand(-8,30));
   }
 
-  player.mood=danger<32?"worried":(!aging&&player.vy>120?"idle":player.mood);
+  if(!aging){
+    player.mood=danger<32?"worried":(player.vy>120?"idle":player.mood);
+  }
 
   if(player.y-player.r<0||player.y+player.r>H-72)endGame();
 
@@ -1076,6 +1202,30 @@ function update(dt){
   }
 
   state.just=false;
+}
+
+function updateModeUI(aging){
+  modeCard.classList.toggle("active",aging);
+  intensityBar.style.width=Math.round(state.agingPower*100)+"%";
+
+  if(aging&&state.agingPower>.78){
+    modeText.textContent="Demasiada intensidad";
+  }else if(aging){
+    modeText.textContent="Intensificando";
+  }else if(state.agingPower>.15){
+    modeText.textContent="Recuperando precisión";
+  }else{
+    modeText.textContent="Mantén para intensificar";
+  }
+}
+
+function updateScene(years){
+  let target=0;
+  if(years>=6&&years<12)target=1;
+  if(years>=12)target=2;
+
+  state.scene=target;
+  state.blend=clamp((years%6)/6,0,1);
 }
 
 function draw(){
@@ -1223,12 +1373,7 @@ function cane(alpha){
 
     ctx.beginPath();
     ctx.moveTo(x,base);
-    ctx.quadraticCurveTo(
-      x+lean*.35,
-      base-h*.5,
-      x+lean,
-      top
-    );
+    ctx.quadraticCurveTo(x+lean*.35,base-h*.5,x+lean,top);
     ctx.stroke();
 
     ctx.strokeStyle="rgba(246,234,208,.26)";
@@ -1261,15 +1406,7 @@ function cane(alpha){
 
     for(let k=0;k<5;k++){
       ctx.beginPath();
-      ctx.ellipse(
-        x+lean-5+k*2,
-        top-28-k*2,
-        1.2,
-        4.2,
-        Math.sin(k)*0.5,
-        0,
-        Math.PI*2
-      );
+      ctx.ellipse(x+lean-5+k*2,top-28-k*2,1.2,4.2,Math.sin(k)*0.5,0,Math.PI*2);
       ctx.fill();
     }
   }
@@ -1287,18 +1424,8 @@ function drawCaneLeaf(x,y,dir,alpha){
 
   ctx.beginPath();
   ctx.moveTo(x,y);
-  ctx.quadraticCurveTo(
-    x+dir*26,
-    y-16,
-    x+dir*54,
-    y-8
-  );
-  ctx.quadraticCurveTo(
-    x+dir*28,
-    y-2,
-    x,
-    y
-  );
+  ctx.quadraticCurveTo(x+dir*26,y-16,x+dir*54,y-8);
+  ctx.quadraticCurveTo(x+dir*28,y-2,x,y);
   ctx.fill();
   ctx.stroke();
 
