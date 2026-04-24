@@ -481,7 +481,7 @@ button:active{
 
         <div class="button-row">
           <button id="startButton">Comenzar</button>
-          <button class="secondary" id="soundButton">Sonido On</button>
+          <button class="secondary" id="soundButton">Sonido: On</button>
         </div>
 
         <div class="instructions">
@@ -507,7 +507,7 @@ button:active{
 
         <div class="button-row">
           <button id="restartButton">Volver a añejar</button>
-          <button class="secondary" id="muteButton">Sonido On</button>
+          <button class="secondary" id="muteButton">Sonido: On</button>
         </div>
       </div>
     </div>
@@ -530,8 +530,7 @@ const CONFIG={
   agingGravity:860,
   agingLift:-450,
   difficultyCap:34,
-  storageKey:"ronCarupanoBest",
-  logoUrl:"https://roncarupano.com/wp-content/uploads/2024/10/Ron-Carupano-Logo-azul-oscuro-1.png.webp"
+  storageKey:"ronCarupanoBest"
 };
 
 const canvas=document.getElementById("game");
@@ -613,7 +612,7 @@ addEventListener("resize",resize,{passive:true});
 resize();
 
 function initAudio(){
-  if(audioCtx||state.muted)return;
+  if(audioCtx)return;
 
   const AC=window.AudioContext||window.webkitAudioContext;
   if(!AC)return;
@@ -621,7 +620,7 @@ function initAudio(){
   audioCtx=new AC();
 
   const master=audioCtx.createGain();
-  master.gain.value=.16;
+  master.gain.value=state.muted?0:.16;
   master.connect(audioCtx.destination);
 
   const hum=audioCtx.createOscillator();
@@ -649,7 +648,7 @@ function initAudio(){
 function setMuted(v){
   state.muted=v;
   if(ambient)ambient.gain.value=v?0:.16;
-  soundButton.textContent=muteButton.textContent=v?"Sonido Off":"Sonido On";
+  soundButton.textContent=muteButton.textContent=v?"Sonido: Off":"Sonido: On";
 }
 
 function tone(f,d,type="sine",vol=.035,slide,filter){
@@ -997,6 +996,16 @@ addEventListener("keyup",e=>{
   if(e.code==="Space"||e.code==="ArrowUp")up(e);
 });
 
+function stopGameInput(e){
+  e.stopPropagation();
+}
+
+[startScreen, gameOverScreen, startButton, restartButton, soundButton, muteButton].forEach(el=>{
+  el.addEventListener("pointerdown", stopGameInput);
+  el.addEventListener("pointerup", stopGameInput);
+  el.addEventListener("click", stopGameInput);
+});
+
 startButton.onclick=e=>{
   e.stopPropagation();
   start();
@@ -1010,10 +1019,24 @@ restartButton.onclick=e=>{
 soundButton.onclick=e=>{
   e.stopPropagation();
   initAudio();
+
+  if(audioCtx&&audioCtx.state==="suspended"){
+    audioCtx.resume();
+  }
+
   setMuted(!state.muted);
 };
 
-muteButton.onclick=soundButton.onclick;
+muteButton.onclick=e=>{
+  e.stopPropagation();
+  initAudio();
+
+  if(audioCtx&&audioCtx.state==="suspended"){
+    audioCtx.resume();
+  }
+
+  setMuted(!state.muted);
+};
 
 function update(dt){
   state.time+=dt;
