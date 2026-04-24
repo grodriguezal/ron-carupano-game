@@ -594,6 +594,11 @@ const player={
 
 let audioCtx=null;
 let ambient=null;
+let musicGain=null;
+let musicTimer=null;
+let musicNodes=[];
+let musicIndex=0;
+let musicPulseLock=false;
 
 function resize(){
   const r=wrap.getBoundingClientRect();
@@ -623,6 +628,10 @@ function initAudio(){
   master.gain.value=state.muted?0:.16;
   master.connect(audioCtx.destination);
 
+  musicGain=audioCtx.createGain();
+  musicGain.gain.value=state.muted?0:.82;
+  musicGain.connect(audioCtx.destination);
+
   const hum=audioCtx.createOscillator();
   const g=audioCtx.createGain();
   const lfo=audioCtx.createOscillator();
@@ -648,7 +657,14 @@ function initAudio(){
 function setMuted(v){
   state.muted=v;
   if(ambient)ambient.gain.value=v?0:.16;
+  if(musicGain)musicGain.gain.value=v?0:.82;
   soundButton.textContent=muteButton.textContent=v?"Sonido: Off":"Sonido: On";
+
+  if(v){
+    stopMusic();
+  }else if(state.phase==="play"){
+    startMusicLoop();
+  }
 }
 
 function tone(f,d,type="sine",vol=.035,slide,filter){
@@ -682,10 +698,44 @@ function tone(f,d,type="sine",vol=.035,slide,filter){
   o.stop(n+d+.04);
 }
 
-function woodTap(){
+function musicTone(freq,duration,type="triangle",volume=.012,when=0,filterFreq=950){
+  if(!audioCtx||state.muted||!musicGain)return;
+
+  const t=audioCtx.currentTime+when;
+  const osc=audioCtx.createOscillator();
+  const gain=audioCtx.createGain();
+  const filter=audioCtx.createBiquadFilter();
+
+  osc.type=type;
+  osc.frequency.setValueAtTime(freq,t);
+
+  filter.type="lowpass";
+  filter.frequency.value=filterFreq;
+
+  gain.gain.setValueAtTime(.0001,t);
+  gain.gain.exponentialRampToValueAtTime(volume,t+.05);
+  gain.gain.exponentialRampToValueAtTime(.0001,t+duration);
+
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(musicGain);
+
+  osc.start(t);
+  osc.stop(t+duration+.08);
+
+  musicNodes.push(osc);
+}
+
+function softChord(notes,duration=2.2,volume=.008,when=0){
+  notes.forEach((n,i)=>{
+    musicTone(n,duration,"triangle",volume,when+i*.035,900);
+  });
+}
+
+function woodTap(when=0,volume=.045){
   if(!audioCtx||state.muted)return;
 
-  const n=audioCtx.currentTime;
+  const t=audioCtx.currentTime+when;
   const b=audioCtx.createBuffer(1,audioCtx.sampleRate*.045,audioCtx.sampleRate);
   const data=b.getChannelData(0);
 
@@ -701,21 +751,124 @@ function woodTap(){
   f.frequency.value=520;
   f.Q.value=5;
 
-  g.gain.setValueAtTime(.045,n);
-  g.gain.exponentialRampToValueAtTime(.0001,n+.08);
+  g.gain.setValueAtTime(volume,t);
+  g.gain.exponentialRampToValueAtTime(.0001,t+.08);
 
   s.buffer=b;
   s.connect(f);
   f.connect(g);
   g.connect(audioCtx.destination);
 
-  s.start(n);
-  s.stop(n+.09);
+  s.start(t);
+  s.stop(t+.09);
+}
+
+function musicWoodTap(when=0,volume=.018){
+  if(!audioCtx||state.muted||!musicGain)return;
+
+  const t=audioCtx.currentTime+when;
+  const b=audioCtx.createBuffer(1,audioCtx.sampleRate*.055,audioCtx.sampleRate);
+  const data=b.getChannelData(0);
+
+  for(let i=0;i<data.length;i++){
+    data[i]=(Math.random()*2-1)*(1-i/data.length);
+  }
+
+  const s=audioCtx.createBufferSource();
+  const f=audioCtx.createBiquadFilter();
+  const g=audioCtx.createGain();
+
+  f.type="bandpass";
+  f.frequency.value=500;
+  f.Q.value=4.5;
+
+  g.gain.setValueAtTime(volume,t);
+  g.gain.exponentialRampToValueAtTime(.0001,t+.1);
+
+  s.buffer=b;
+  s.connect(f);
+  f.connect(g);
+  g.connect(musicGain);
+
+  s.start(t);
+  s.stop(t+.11);
+
+  musicNodes.push(s);
+}
+
+function stopMusic(){
+  if(musicTimer){
+    clearTimeout(musicTimer);
+    musicTimer=null;
+  }
+
+  musicNodes.forEach(node=>{
+    try{node.stop();}catch(e){}
+    try{node.disconnect();}catch(e){}
+  });
+
+  musicNodes=[];
+}
+
+function startMusicLoop(){
+  if(!audioCtx||state.muted||state.phase!=="play")return;
+  if(musicTimer)return;
+
+  scheduleMusicBar();
+}
+
+function scheduleMusicBar(){
+  if(!audioCtx||state.muted||state.phase!=="play"){
+    musicTimer=null;
+    return;
+  }
+
+  musicTimer=null;
+
+  const scene=state.scene;
+  const baseChords=[
+    [[196,247,294],[174,220,294],[196,247,330]],
+    [[220,277,330],[196,247,330],[220,294,370]],
+    [[174,220,294],[196,247,330],[147,196,247]]
+  ];
+
+  const melodies=[
+    [294,330,247,392,330,294,247],
+    [330,370,294,440,370,330,277],
+    [247,294,220,330,294,247,196]
+  ];
+
+  const chords=baseChords[scene]||baseChords[0];
+  const melody=melodies[scene]||melodies[0];
+
+  softChord(chords[musicIndex%chords.length],2.7,.0065,.15);
+
+  melody.forEach((n,i)=>{
+    const t=1.05+i*.82;
+    const vol=scene===2?.011:.012;
+    musicTone(n,.52,"triangle",vol,t,1200);
+    musicTone(n*2,.25,"sine",.0035,t+.04,1800);
+  });
+
+  for(let i=0;i<6;i++){
+    musicWoodTap(.75+i*1.05,.012);
+  }
+
+  if(state.agingPower>.45){
+    softChord([247,294,392],1.2,.008,3.25);
+  }
+
+  musicIndex++;
+
+  musicTimer=setTimeout(()=>{
+    musicTimer=null;
+    scheduleMusicBar();
+  },7200);
 }
 
 const sound={
   jump(){
-    woodTap();
+    woodTap(0,.04);
     tone(260,.07,"triangle",.025,360,1200);
   },
   score(){
@@ -726,12 +879,19 @@ const sound={
     tone(118,.14,"triangle",.012,150,900);
   },
   crash(){
-    woodTap();
+    woodTap(0,.052);
+    woodTap(.08,.032);
     tone(150,.2,"triangle",.035,72,650);
   },
   milestone(){
-    tone(390,.09,"sine",.03,560);
-    setTimeout(()=>tone(690,.14,"triangle",.035,960),80);
+    softChord([196,247,330],.9,.014,0);
+    tone(392,.35,"triangle",.025,undefined,1400);
+    setTimeout(()=>tone(494,.45,"sine",.016,undefined,1800),120);
+    setTimeout(()=>tone(659,.6,"triangle",.012,undefined,1800),260);
+  },
+  masteryPulse(){
+    musicWoodTap(0,.02);
+    musicTone(110,.16,"triangle",.009,0,600);
   }
 };
 
@@ -773,11 +933,14 @@ function reset(){
   scoreEl.textContent="0 años";
   tierEl.textContent="Primer añejamiento";
   intensityBar.style.width="0%";
+
+  startMusicLoop();
 }
 
 function start(){
   initAudio();
   if(audioCtx&&audioCtx.state==="suspended")audioCtx.resume();
+  stopMusic();
   reset();
   sound.jump();
 }
@@ -789,6 +952,7 @@ function endGame(){
   player.mood="crash";
   state.shake=10;
   wrap.classList.remove("playing");
+  stopMusic();
 
   sound.crash();
 
@@ -1128,6 +1292,12 @@ function update(dt){
       sound.aging();
       update.lock=1;
       setTimeout(()=>update.lock=0,330);
+    }
+
+    if(!musicPulseLock&&state.agingPower>.55){
+      sound.masteryPulse();
+      musicPulseLock=true;
+      setTimeout(()=>musicPulseLock=false,720);
     }
   }
 
