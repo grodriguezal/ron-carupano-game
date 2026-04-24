@@ -214,6 +214,25 @@ h1{
   max-width:340px;
 }
 
+.best-score{
+  margin:14px auto 0;
+  display:inline-block;
+  border-radius:999px;
+  padding:9px 14px;
+  font-family:Arial,sans-serif;
+  font-size:13px;
+  font-weight:800;
+  color:#f6ead0;
+  background:rgba(255,255,255,.07);
+  box-shadow:
+    inset 0 0 0 1px rgba(217,179,95,.2),
+    0 8px 18px rgba(0,0,0,.18);
+}
+
+.best-score strong{
+  color:#d9b35f;
+}
+
 .button-row{
   display:flex;
   justify-content:center;
@@ -417,8 +436,8 @@ button:active{
         <h1>Maestra<br>Ronera</h1>
 
         <p class="subtitle">
-          Guía a la Maestra Ronera por la costa oriental venezolana, los cañaverales, la destilería y la cava.
-          El reto es dominar el añejamiento y acercarte a los 20 años.
+          Guía a Carmen López de Bastidas, Maestra Ronera de Ron Carúpano, por la costa oriental venezolana, los cañaverales, la destilería y la cava.
+          El reto es crear el añejamiento perfecto.
         </p>
 
         <div class="button-row">
@@ -437,13 +456,15 @@ button:active{
           <img src="https://roncarupano.com/wp-content/uploads/2024/10/Ron-Carupano-Logo-azul-oscuro-1.png.webp" alt="Ron Carúpano">
         </div>
 
-        <div class="brand">Almost perfect...</div>
+        <div class="brand" id="gameOverTitle">Carmen López de Bastidas</div>
 
         <h1 id="finalScore">Aged to 0 years</h1>
 
         <p class="subtitle" id="finalText">
-          La cava recuerda cada intento. Refina tu técnica y alcanza una reserva de 20 años.
+          Cada gran ron empieza con práctica. Acompaña a Carmen López de Bastidas e inténtalo de nuevo.
         </p>
+
+        <div class="best-score" id="finalBest">Best aging: 0 years</div>
 
         <div class="button-row">
           <button id="restartButton">Volver a añejar</button>
@@ -474,6 +495,8 @@ const soundButton=document.getElementById("soundButton");
 const muteButton=document.getElementById("muteButton");
 const finalScore=document.getElementById("finalScore");
 const finalText=document.getElementById("finalText");
+const finalBest=document.getElementById("finalBest");
+const gameOverTitle=document.getElementById("gameOverTitle");
 
 let W=420;
 let H=720;
@@ -711,12 +734,70 @@ function endGame(){
   state.best=Math.max(state.best,y);
   localStorage.setItem("ronCarupanoBestV12",state.best);
 
-  finalScore.textContent="Aged to "+y+" years";
-  finalText.innerHTML=
-    tier(y)+". Best aging: <strong>"+state.best+
-    " years</strong>. El reto es ayudar a la Maestra Ronera a crear el añejamiento perfecto.";
+  const result=getResultMessage(y);
+
+  gameOverTitle.textContent=result.title;
+  finalScore.textContent=result.headline;
+  finalText.innerHTML=result.body;
+  finalBest.innerHTML="Best aging: <strong>"+state.best+" years</strong>";
 
   setTimeout(()=>gameOverScreen.classList.remove("hidden"),520);
+}
+
+function getResultMessage(years){
+  if(years>=24){
+    return {
+      title:"Añejamiento extraordinario",
+      headline:"Aged to "+years+" years",
+      body:"Carmen López de Bastidas ha guiado una creación excepcional. El reto ahora es repetir la maestría."
+    };
+  }
+
+  if(years>=20){
+    return {
+      title:"Reserva legendaria",
+      headline:"Aged to "+years+" years",
+      body:"Con la ayuda de Carmen López de Bastidas, alcanzaste un añejamiento digno de una gran reserva."
+    };
+  }
+
+  if(years>=16){
+    return {
+      title:"Maestría Ronera",
+      headline:"Aged to "+years+" years",
+      body:"Excelente trabajo. Carmen López de Bastidas está muy cerca de lograr el añejamiento perfecto."
+    };
+  }
+
+  if(years>=12){
+    return {
+      title:"Reserva prometedora",
+      headline:"Aged to "+years+" years",
+      body:"Muy buen avance. Ayudaste a Carmen López de Bastidas a crear un ron con carácter y profundidad."
+    };
+  }
+
+  if(years>=8){
+    return {
+      title:"Buen añejamiento",
+      headline:"Aged to "+years+" years",
+      body:"Vas por buen camino. Carmen López de Bastidas necesita precisión para llevar este ron más lejos."
+    };
+  }
+
+  if(years>=4){
+    return {
+      title:"Buen inicio",
+      headline:"Aged to "+years+" years",
+      body:"El proceso ha comenzado. Ayuda a Carmen López de Bastidas a refinar el arte del añejamiento."
+    };
+  }
+
+  return {
+    title:"Primer añejamiento",
+    headline:"Aged to "+years+" years",
+    body:"Cada gran ron empieza con práctica. Acompaña a Carmen López de Bastidas e inténtalo de nuevo."
+  };
 }
 
 function spawnObstacle(x,gap){
