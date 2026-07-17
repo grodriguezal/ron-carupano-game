@@ -211,8 +211,8 @@ canvas{
   height:11px;
   background:rgba(248,237,212,.26);
 }
-.progress-markers i:nth-child(1){left:36%}
-.progress-markers i:nth-child(2){left:68%}
+.progress-markers i:nth-child(1){left:40%}
+.progress-markers i:nth-child(2){left:76%}
 
 .focus-wrap{
   position:absolute;
@@ -601,7 +601,7 @@ h2{margin:0;color:var(--gold-bright);font-size:clamp(31px,7vw,45px);line-height:
           <div class="instruction"><div class="gesture">↑</div><b>Toque / click</b>Un impulso breve y preciso.</div>
           <div class="instruction"><div class="gesture">◉</div><b>Mantén</b>Activa la concentración y ralentiza el tiempo.</div>
         </div>
-        <div class="pause-note"><span></span>Busca el centro de cada paso, protege tu concentración y persigue Legendario.</div>
+        <div class="pause-note"><span></span>El trayecto es más largo: protege tu concentración, encadena precisión y persigue Legendario.</div>
       </div>
     </div>
 
@@ -658,27 +658,27 @@ h2{margin:0;color:var(--gold-bright);font-size:clamp(31px,7vw,45px);line-height:
 
 const CONFIG = {
   targetYears: 25,
-  baseSpeed: 142,
-  maxSpeed: 348,
+  baseSpeed: 140,
+  maxSpeed: 356,
   gravity: 790,
   impulse: -322,
-  minGap: 118,
-  maxGap: 198,
-  minSpacing: 188,
-  maxSpacing: 272,
-  passiveYears: .145,
-  passYears: .43,
-  precisionYears: .13,
-  perfectYears: .28,
-  collectibleYears: .06,
-  focusDrain: 37,
-  focusRegen: 11.5,
-  focusSlow: .84,
-  focusDamping: 1.45,
+  minGap: 116,
+  maxGap: 196,
+  minSpacing: 196,
+  maxSpacing: 286,
+  passiveYears: .105,
+  passYears: .31,
+  precisionYears: .085,
+  perfectYears: .19,
+  collectibleYears: .04,
+  focusDrain: 38,
+  focusRegen: 11,
+  focusSlow: .85,
+  focusDamping: 1.40,
   floorHeight: 78,
-  storageBest: "rc_mastery_best_v4",
-  storageCombo: "rc_mastery_combo_v4",
-  storageMuted: "rc_mastery_muted_v4"
+  storageBest: "rc_mastery_best_v5",
+  storageCombo: "rc_mastery_combo_v5",
+  storageMuted: "rc_mastery_muted_v5"
 };
 
 const $ = id => document.getElementById(id);
@@ -721,8 +721,8 @@ const ui = {
 
 const chapters = [
   { from:0,  name:"El origen", number:"Capítulo I", copy:"La costa, la caña y una identidad nacida en el valle." },
-  { from:9,  name:"La transformación", number:"Capítulo II", copy:"El cobre, el fuego y la precisión convierten el origen en carácter." },
-  { from:17, name:"La paciencia", number:"Capítulo III", copy:"En la quietud de la cava, el tiempo revela profundidad y armonía." }
+  { from:10,  name:"La transformación", number:"Capítulo II", copy:"El cobre, el fuego y la precisión convierten el origen en carácter." },
+  { from:19, name:"La paciencia", number:"Capítulo III", copy:"En la quietud de la cava, el tiempo revela profundidad y armonía." }
 ];
 
 const palette = {
@@ -780,7 +780,8 @@ const state = {
   vignette:0,
   muted:safeStorage.get(CONFIG.storageMuted,"0") === "1",
   win:false,
-  ended:false
+  ended:false,
+  finalStretchShown:false
 };
 
 const player = {
@@ -960,6 +961,7 @@ function reset(){
   state.vignette=0;
   state.win=false;
   state.ended=false;
+  state.finalStretchShown=false;
 
   player.y=H*.47;
   player.vy=-155;
@@ -1068,10 +1070,10 @@ function showResults(){
 
 function resultMessage(years,win){
   if(win) return {title:"Legendario",copy:"Completaste los 25 años de añejamiento y culminaste el viaje del origen a la cava con una ejecución legendaria."};
-  if(years>=22) return {title:"Muy cerca de Legendario",copy:"La madurez ya estaba conseguida. Un último tramo de precisión habría culminado el ritual."};
-  if(years>=17) return {title:"La paciencia revela carácter",copy:"Llegaste a la cava y construiste profundidad. Refina tu racha de pasos perfectos para completar la obra."};
-  if(years>=9) return {title:"La transformación comenzó",copy:"El origen encontró carácter en el cobre. Mantén la calma y reserva la concentración para los pasos más exigentes."};
-  if(years>=5) return {title:"Primeros aromas",copy:"El proceso comienza a expresarse. Busca el centro de cada paso y construye una racha de precisión."};
+  if(years>=22) return {title:"Muy cerca de Legendario",copy:"Superaste el umbral final. Un poco más de calma y precisión habría culminado el ritual."};
+  if(years>=19) return {title:"La paciencia revela carácter",copy:"Llegaste a la cava y construiste profundidad. Ahora comienza el tramo más exigente del ritual."};
+  if(years>=10) return {title:"La transformación comenzó",copy:"El origen encontró carácter en el cobre. Mantén la calma y reserva la concentración para los pasos más exigentes."};
+  if(years>=3) return {title:"Primeros aromas",copy:"El proceso comienza a expresarse. Busca el centro de cada paso y construye una racha de precisión."};
   return {title:"Todo empieza con paciencia",copy:"Cada gran resultado nace de observar, ajustar y volver a intentarlo."};
 }
 
@@ -1133,7 +1135,7 @@ setMuted(state.muted);
 ui.startBest.textContent=state.best+" año"+(state.best===1?"":"s");
 
 async function copyResult(){
-  const text=`Completé ${Math.floor(state.years)} años en “El Arte del Añejamiento” de Ron Carúpano, con ${state.perfects} pasos perfectos y una racha máxima ×${state.bestCombo}.`;
+  const text=`Completé ${Math.floor(state.years)} años en “El Arte del Añejamiento” de Ron Carúpano, con ${state.perfects} pasos perfectos, una racha máxima ×${state.bestCombo} y ${state.passed} barricas superadas.`;
   try{
     await navigator.clipboard.writeText(text);
     showToast("Resultado copiado");
@@ -1156,7 +1158,8 @@ function showToast(text){
 // ---------- World ----------
 function createObstacle(x,index=0){
   const progress=clamp(state.years/CONFIG.targetYears,0,1);
-  const gap=clamp(CONFIG.maxGap-progress*84+rand(-10,6),CONFIG.minGap,CONFIG.maxGap);
+  const endgameFactor = progress>.84 ? (progress-.84)/.16 : 0;
+  const gap=clamp(CONFIG.maxGap-progress*70-endgameFactor*20+rand(-10,6),CONFIG.minGap,CONFIG.maxGap);
   const marginTop=Math.max(220,H*.275);
   const marginBottom=CONFIG.floorHeight+78;
   const minCenter=marginTop+gap/2;
@@ -1164,22 +1167,22 @@ function createObstacle(x,index=0){
   let center;
   if(obstacles.length){
     const previous=obstacles[obstacles.length-1].center;
-    const maxShift=clamp(82-progress*30,40,82);
+    const maxShift=clamp(80-progress*26-endgameFactor*8,36,80);
     center=clamp(previous+rand(-maxShift,maxShift),minCenter,maxCenter);
   }else{
     center=clamp(H*.51+Math.sin(index*.9)*52,minCenter,maxCenter);
   }
   const chapter=state.chapter;
-  const collectible=Math.random()<.48;
+  const collectible=Math.random()<.42;
   return {
     x,
     w:clamp(W*.12,48,62),
     gap,
     center,
     liveCenter:center,
-    drift:progress<.26?0:rand(7,19)*(progress<.68?.8:1.35),
+    drift:progress<.24?0:rand(7,18)*(progress<.68?.82:1.26)*(1+endgameFactor*.45),
     driftSpeed:rand(1.0,1.75),
-    squeeze:progress<.48?0:rand(4,12)*(progress<.76?.8:1.25),
+    squeeze:progress<.46?0:rand(4,11)*(progress<.76?.78:1.18)*(1+endgameFactor*.35),
     squeezeSpeed:rand(1.2,2.2),
     collectibleBob:rand(0,Math.PI*2),
     passed:false,
@@ -1199,7 +1202,7 @@ function createObstacle(x,index=0){
 function spawnNext(){
   const last=obstacles.length?Math.max(...obstacles.map(o=>o.x)):W;
   const p=clamp(state.years/CONFIG.targetYears,0,1);
-  const spacing=clamp(CONFIG.maxSpacing-p*92+rand(-16,20),CONFIG.minSpacing,CONFIG.maxSpacing);
+  const spacing=clamp(CONFIG.maxSpacing-p*86+rand(-12,26),CONFIG.minSpacing,CONFIG.maxSpacing);
   obstacles.push(createObstacle(last+spacing));
 }
 
@@ -1232,12 +1235,19 @@ function update(dt){
   if(state.phase!=="play") return;
 
   state.runTime+=dt;
-  const chapterIndex=state.years>=17?2:state.years>=9?1:0;
+  const chapterIndex=state.years>=19?2:state.years>=10?1:0;
   if(chapterIndex!==state.chapter){
     state.chapter=chapterIndex;
     stopMusic();
     showChapter(chapterIndex,false);
     startMusic();
+  }
+
+  if(!state.finalStretchShown && state.years>=22){
+    state.finalStretchShown=true;
+    state.flash=.6;
+    showBanner("Tramo final · Legendario",true);
+    sound.chapter();
   }
 
   if(state.chapterTimer>0){
@@ -1301,11 +1311,12 @@ function update(dt){
   const progress=clamp(state.years/CONFIG.targetYears,0,1);
   state.difficulty=progress;
   const surge=progress>.52?Math.sin(state.runTime*(.8+progress*.55))*9*progress:0;
-  const baseSpeed=lerp(CONFIG.baseSpeed,CONFIG.maxSpeed,Math.pow(progress,.96))+surge;
+  const endgameFactor = progress>.84 ? (progress-.84)/.16 : 0;
+  const baseSpeed=lerp(CONFIG.baseSpeed,CONFIG.maxSpeed,Math.pow(progress,.96))+surge+endgameFactor*24;
   const worldScale=state.focusing?CONFIG.focusSlow:1;
   const speed=baseSpeed*worldScale;
-  const multiplier=1+(state.combo-1)*.09;
-  state.years+=dt*CONFIG.passiveYears*(state.focusing?.68:1);
+  const multiplier=1+(state.combo-1)*.07;
+  state.years+=dt*CONFIG.passiveYears*(state.focusing?.62:1);
 
   let danger=999;
   for(const obstacle of obstacles){
@@ -1322,7 +1333,7 @@ function update(dt){
       const c=obstacle.collectible;
       c.pulse+=dt*5;
       c.y += Math.sin(state.runTime*1.8+obstacle.collectibleBob)*dt*10;
-      const magnet=state.focusing?48:18;
+      const magnet=state.focusing?42:16;
       const dx=player.x-c.x,dy=player.y-c.y;
       const distance=Math.hypot(dx,dy);
       if(state.focusing && distance<magnet){ c.x+=dx*dt*3.6;c.y+=dy*dt*3.6; }
@@ -1349,7 +1360,7 @@ function update(dt){
   obstacles=obstacles.filter(o=>o.x+o.w>-70);
   while(obstacles.length<5) spawnNext();
 
-  player.mood=danger<40?"worried":(state.focusing?"focused":"calm");
+  player.mood=danger<44?"worried":(state.focusing?"focused":"calm");
   if(player.y-player.r<0 || player.y+player.r>H-CONFIG.floorHeight+2) endGame(false);
 
   if(state.years>=CONFIG.targetYears && !state.ended) endGame(true);
@@ -1361,8 +1372,8 @@ function update(dt){
 
 function evaluatePass(obstacle,multiplier){
   const offset=Math.abs(player.y-(obstacle.liveCenter ?? obstacle.center));
-  const perfectWindow=state.focusing?12:9;
-  const preciseWindow=state.focusing?27:21;
+  const perfectWindow=state.focusing?11:8;
+  const preciseWindow=state.focusing?25:20;
   state.years+=CONFIG.passYears*multiplier;
 
   if(offset<=perfectWindow){
@@ -1392,8 +1403,8 @@ function evaluatePass(obstacle,multiplier){
 function collect(c){
   c.collected=true;
   state.collected++;
-  state.focus=Math.min(100,state.focus+8);
-  state.years+=CONFIG.collectibleYears*(1+(state.combo-1)*.1);
+  state.focus=Math.min(100,state.focus+6);
+  state.years+=CONFIG.collectibleYears*(1+(state.combo-1)*.08);
   addFloater("+ ESENCIA",c.x,c.y-12,palette.bright);
   rings.push({x:c.x,y:c.y,r:7,life:.55,max:.55,color:palette.gold});
   for(let i=0;i<14;i++) particle(c.x,c.y,rand(-75,75),rand(-70,65),rand(1.2,3.4),palette.gold,.65,true);
@@ -1433,11 +1444,12 @@ function updateHUD(){
 
 function tierName(years){
   if(years>=25) return "Legendario";
-  if(years>=21) return "Madurez excepcional";
-  if(years>=17) return "Profundidad";
-  if(years>=13) return "Carácter";
-  if(years>=9) return "Transformación";
-  if(years>=5) return "Primeros aromas";
+  if(years>=22) return "Umbral de Legendario";
+  if(years>=19) return "Madurez excepcional";
+  if(years>=15) return "Profundidad";
+  if(years>=10) return "Carácter";
+  if(years>=6) return "Transformación";
+  if(years>=3) return "Primeros aromas";
   return "El origen";
 }
 
