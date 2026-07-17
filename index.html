@@ -125,6 +125,7 @@ canvas{
 }
 
 .glass-card{
+  backdrop-filter:blur(14px);
   border-radius:17px;
   padding:10px 12px;
   background:linear-gradient(180deg,rgba(34,18,10,.88),rgba(14,7,4,.72));
@@ -177,7 +178,7 @@ canvas{
 
 .progress-track{
   position:absolute;
-  top:132px;
+  top:154px;
   left:17px;
   right:17px;
   height:5px;
@@ -198,7 +199,7 @@ canvas{
 
 .progress-markers{
   position:absolute;
-  top:126px;
+  top:148px;
   left:17px;
   right:17px;
   height:17px;
@@ -210,8 +211,8 @@ canvas{
   height:11px;
   background:rgba(248,237,212,.26);
 }
-.progress-markers i:nth-child(1){left:33.333%}
-.progress-markers i:nth-child(2){left:66.666%}
+.progress-markers i:nth-child(1){left:36%}
+.progress-markers i:nth-child(2){left:68%}
 
 .focus-wrap{
   position:absolute;
@@ -263,7 +264,7 @@ canvas{
 .banner{
   position:absolute;
   left:50%;
-  top:154px;
+  top:182px;
   max-width:85%;
   transform:translate(-50%,-14px) scale(.96);
   opacity:0;
@@ -500,12 +501,13 @@ h2{margin:0;color:var(--gold-bright);font-size:clamp(31px,7vw,45px);line-height:
   .brand-lockup{top:max(8px,env(safe-area-inset-top));width:42%}
   .icon-buttons{top:max(10px,env(safe-area-inset-top))}
   .topbar{top:60px;left:9px;right:9px;gap:6px}
-  .glass-card{padding:8px 9px;border-radius:14px}
+  .glass-card{
+  backdrop-filter:blur(14px);padding:8px 9px;border-radius:14px}
   .chapter-card{min-width:92px;padding:8px}
   #years{font-size:25px}
   #combo{font-size:19px}
-  .progress-track{top:119px;left:13px;right:13px}
-  .progress-markers{top:113px;left:13px;right:13px}
+  .progress-track{top:141px;left:13px;right:13px}
+  .progress-markers{top:135px;left:13px;right:13px}
   .banner{top:137px}
   .focus-wrap{left:9px;right:9px;bottom:max(9px,env(safe-area-inset-bottom))}
   .overlay{padding:15px}
@@ -559,9 +561,9 @@ h2{margin:0;color:var(--gold-bright);font-size:clamp(31px,7vw,45px);line-height:
         </div>
 
         <div class="glass-card combo-card" id="comboCard">
-          <div class="eyebrow">Precisión</div>
+          <div class="eyebrow">Racha</div>
           <div id="combo">×1</div>
-          <div id="comboLabel">Sin cadena</div>
+          <div id="comboLabel">Sin racha</div>
         </div>
       </div>
 
@@ -586,10 +588,10 @@ h2{margin:0;color:var(--gold-bright);font-size:clamp(31px,7vw,45px);line-height:
         <div class="kicker">Valle de Carúpano · Venezuela</div>
         <h1>El Arte del<br>Añejamiento</h1>
         <p class="lead">
-          Acompaña a Carmen López de Bastidas, Maestra Ronera, desde el origen hasta la cava. El tiempo aporta carácter; la precisión crea una obra maestra.
+          Acompaña a Carmen López de Bastidas, Maestra Ronera, desde el origen hasta la cava. El tiempo aporta carácter; la precisión culmina en Legendario.
         </p>
         <div class="mini-stats">
-          <div class="stat-pill">Meta: <strong>24 años</strong></div>
+          <div class="stat-pill">Meta: <strong>25 años · Legendario</strong></div>
           <div class="stat-pill">Récord: <strong id="startBest">0 años</strong></div>
         </div>
         <div class="actions">
@@ -599,7 +601,7 @@ h2{margin:0;color:var(--gold-bright);font-size:clamp(31px,7vw,45px);line-height:
           <div class="instruction"><div class="gesture">↑</div><b>Toque / click</b>Un impulso breve y preciso.</div>
           <div class="instruction"><div class="gesture">◉</div><b>Mantén</b>Activa la concentración y ralentiza el tiempo.</div>
         </div>
-        <div class="pause-note"><span></span>Busca el centro de cada paso para crear una cadena perfecta.</div>
+        <div class="pause-note"><span></span>Busca el centro de cada paso, protege tu concentración y persigue Legendario.</div>
       </div>
     </div>
 
@@ -626,7 +628,7 @@ h2{margin:0;color:var(--gold-bright);font-size:clamp(31px,7vw,45px);line-height:
         <div class="result-grid">
           <div class="result-cell"><div class="result-value" id="resultYears">0</div><div class="result-label">Años</div></div>
           <div class="result-cell"><div class="result-value" id="resultPerfect">0</div><div class="result-label">Perfectos</div></div>
-          <div class="result-cell"><div class="result-value" id="resultCombo">×1</div><div class="result-label">Mejor cadena</div></div>
+          <div class="result-cell"><div class="result-value" id="resultCombo">×1</div><div class="result-label">Mejor racha</div></div>
         </div>
         <div class="mini-stats">
           <div class="stat-pill">Mejor añejamiento: <strong id="bestYears">0 años</strong></div>
@@ -655,28 +657,28 @@ h2{margin:0;color:var(--gold-bright);font-size:clamp(31px,7vw,45px);line-height:
 "use strict";
 
 const CONFIG = {
-  targetYears: 24,
-  baseSpeed: 126,
-  maxSpeed: 242,
+  targetYears: 25,
+  baseSpeed: 142,
+  maxSpeed: 348,
   gravity: 790,
   impulse: -322,
-  minGap: 148,
-  maxGap: 225,
-  minSpacing: 245,
-  maxSpacing: 330,
-  passiveYears: .205,
-  passYears: .62,
-  precisionYears: .20,
-  perfectYears: .42,
-  collectibleYears: .12,
-  focusDrain: 30,
-  focusRegen: 17,
-  focusSlow: .67,
-  focusDamping: 2.25,
+  minGap: 118,
+  maxGap: 198,
+  minSpacing: 188,
+  maxSpacing: 272,
+  passiveYears: .145,
+  passYears: .43,
+  precisionYears: .13,
+  perfectYears: .28,
+  collectibleYears: .06,
+  focusDrain: 37,
+  focusRegen: 11.5,
+  focusSlow: .84,
+  focusDamping: 1.45,
   floorHeight: 78,
-  storageBest: "rc_mastery_best_v2",
-  storageCombo: "rc_mastery_combo_v2",
-  storageMuted: "rc_mastery_muted_v2"
+  storageBest: "rc_mastery_best_v4",
+  storageCombo: "rc_mastery_combo_v4",
+  storageMuted: "rc_mastery_muted_v4"
 };
 
 const $ = id => document.getElementById(id);
@@ -719,8 +721,8 @@ const ui = {
 
 const chapters = [
   { from:0,  name:"El origen", number:"Capítulo I", copy:"La costa, la caña y una identidad nacida en el valle." },
-  { from:8,  name:"La transformación", number:"Capítulo II", copy:"El cobre, el fuego y la precisión convierten el origen en carácter." },
-  { from:16, name:"La paciencia", number:"Capítulo III", copy:"En la quietud de la cava, el tiempo revela profundidad y armonía." }
+  { from:9,  name:"La transformación", number:"Capítulo II", copy:"El cobre, el fuego y la precisión convierten el origen en carácter." },
+  { from:17, name:"La paciencia", number:"Capítulo III", copy:"En la quietud de la cava, el tiempo revela profundidad y armonía." }
 ];
 
 const palette = {
@@ -835,8 +837,8 @@ function initAudio(){
   musicGain = audioCtx.createGain();
   sfxGain = audioCtx.createGain();
   masterGain.gain.value = state.muted ? 0 : .72;
-  musicGain.gain.value = .14;
-  sfxGain.gain.value = .56;
+  musicGain.gain.value = .24;
+  sfxGain.gain.value = .60;
   musicGain.connect(masterGain);
   sfxGain.connect(masterGain);
   masterGain.connect(audioCtx.destination);
@@ -923,9 +925,9 @@ function scheduleBar(){
     {root:147, chord:[147,196,247], melody:[247,294,220,330,294,247]}
   ];
   const set = sets[state.chapter];
-  set.chord.forEach((f,i)=>oscillator(f,2.6,{type:"triangle",volume:.018,when:.1+i*.04,filter:800,channel:"music"}));
-  set.melody.forEach((f,i)=>oscillator(f,.48,{type:"triangle",volume:.021,when:1.0+i*.72,filter:1400,channel:"music"}));
-  for(let i=0;i<5;i++) oscillator(set.root/2,.12,{type:"sine",volume:.012,when:.7+i*1.08,filter:500,channel:"music"});
+  set.chord.forEach((f,i)=>oscillator(f,2.8,{type:"triangle",volume:.024,when:.1+i*.04,filter:900,channel:"music"}));
+  set.melody.forEach((f,i)=>oscillator(f,.52,{type:"triangle",volume:.028,when:1.0+i*.72,filter:1500,channel:"music"}));
+  for(let i=0;i<5;i++) oscillator(set.root/2,.14,{type:"sine",volume:.016,when:.7+i*1.08,filter:560,channel:"music"});
   musicStep++;
   musicTimer = setTimeout(()=>{ musicTimer=null; scheduleBar(); },5900);
 }
@@ -1065,11 +1067,11 @@ function showResults(){
 }
 
 function resultMessage(years,win){
-  if(win) return {title:"Obra maestra",copy:"Completaste el viaje del origen a la cava con tiempo, precisión y maestría. Ahora el reto es perfeccionar cada paso."};
-  if(years>=20) return {title:"Muy cerca de la obra maestra",copy:"El carácter ya estaba completo. Un último tramo de precisión habría culminado el ritual."};
-  if(years>=16) return {title:"La paciencia revela carácter",copy:"Llegaste a la cava y construiste profundidad. Refina la cadena de pasos perfectos para completar la obra."};
-  if(years>=8) return {title:"La transformación comenzó",copy:"El origen encontró carácter en el cobre. Mantén la calma y reserva la concentración para los pasos más exigentes."};
-  if(years>=4) return {title:"Primeros aromas",copy:"El proceso comienza a expresarse. Busca el centro de cada paso y construye una cadena de precisión."};
+  if(win) return {title:"Legendario",copy:"Completaste los 25 años de añejamiento y culminaste el viaje del origen a la cava con una ejecución legendaria."};
+  if(years>=22) return {title:"Muy cerca de Legendario",copy:"La madurez ya estaba conseguida. Un último tramo de precisión habría culminado el ritual."};
+  if(years>=17) return {title:"La paciencia revela carácter",copy:"Llegaste a la cava y construiste profundidad. Refina tu racha de pasos perfectos para completar la obra."};
+  if(years>=9) return {title:"La transformación comenzó",copy:"El origen encontró carácter en el cobre. Mantén la calma y reserva la concentración para los pasos más exigentes."};
+  if(years>=5) return {title:"Primeros aromas",copy:"El proceso comienza a expresarse. Busca el centro de cada paso y construye una racha de precisión."};
   return {title:"Todo empieza con paciencia",copy:"Cada gran resultado nace de observar, ajustar y volver a intentarlo."};
 }
 
@@ -1131,7 +1133,7 @@ setMuted(state.muted);
 ui.startBest.textContent=state.best+" año"+(state.best===1?"":"s");
 
 async function copyResult(){
-  const text=`Completé ${Math.floor(state.years)} años en “El Arte del Añejamiento” de Ron Carúpano, con ${state.perfects} pasos perfectos y una cadena máxima ×${state.bestCombo}.`;
+  const text=`Completé ${Math.floor(state.years)} años en “El Arte del Añejamiento” de Ron Carúpano, con ${state.perfects} pasos perfectos y una racha máxima ×${state.bestCombo}.`;
   try{
     await navigator.clipboard.writeText(text);
     showToast("Resultado copiado");
@@ -1154,26 +1156,32 @@ function showToast(text){
 // ---------- World ----------
 function createObstacle(x,index=0){
   const progress=clamp(state.years/CONFIG.targetYears,0,1);
-  const gap=clamp(CONFIG.maxGap-progress*72+rand(-8,8),CONFIG.minGap,CONFIG.maxGap);
-  const marginTop=Math.max(190,H*.24);
+  const gap=clamp(CONFIG.maxGap-progress*84+rand(-10,6),CONFIG.minGap,CONFIG.maxGap);
+  const marginTop=Math.max(220,H*.275);
   const marginBottom=CONFIG.floorHeight+78;
   const minCenter=marginTop+gap/2;
   const maxCenter=H-marginBottom-gap/2;
   let center;
   if(obstacles.length){
     const previous=obstacles[obstacles.length-1].center;
-    const maxShift=clamp(84-progress*18,54,84);
+    const maxShift=clamp(82-progress*30,40,82);
     center=clamp(previous+rand(-maxShift,maxShift),minCenter,maxCenter);
   }else{
     center=clamp(H*.51+Math.sin(index*.9)*52,minCenter,maxCenter);
   }
   const chapter=state.chapter;
-  const collectible=Math.random()<.74;
+  const collectible=Math.random()<.48;
   return {
     x,
     w:clamp(W*.12,48,62),
     gap,
     center,
+    liveCenter:center,
+    drift:progress<.26?0:rand(7,19)*(progress<.68?.8:1.35),
+    driftSpeed:rand(1.0,1.75),
+    squeeze:progress<.48?0:rand(4,12)*(progress<.76?.8:1.25),
+    squeezeSpeed:rand(1.2,2.2),
+    collectibleBob:rand(0,Math.PI*2),
     passed:false,
     evaluated:false,
     chapter,
@@ -1191,7 +1199,7 @@ function createObstacle(x,index=0){
 function spawnNext(){
   const last=obstacles.length?Math.max(...obstacles.map(o=>o.x)):W;
   const p=clamp(state.years/CONFIG.targetYears,0,1);
-  const spacing=clamp(CONFIG.maxSpacing-p*84+rand(-14,26),CONFIG.minSpacing,CONFIG.maxSpacing);
+  const spacing=clamp(CONFIG.maxSpacing-p*92+rand(-16,20),CONFIG.minSpacing,CONFIG.maxSpacing);
   obstacles.push(createObstacle(last+spacing));
 }
 
@@ -1224,7 +1232,7 @@ function update(dt){
   if(state.phase!=="play") return;
 
   state.runTime+=dt;
-  const chapterIndex=state.years>=16?2:state.years>=8?1:0;
+  const chapterIndex=state.years>=17?2:state.years>=9?1:0;
   if(chapterIndex!==state.chapter){
     state.chapter=chapterIndex;
     stopMusic();
@@ -1292,27 +1300,32 @@ function update(dt){
 
   const progress=clamp(state.years/CONFIG.targetYears,0,1);
   state.difficulty=progress;
-  const baseSpeed=lerp(CONFIG.baseSpeed,CONFIG.maxSpeed,Math.pow(progress,.88));
+  const surge=progress>.52?Math.sin(state.runTime*(.8+progress*.55))*9*progress:0;
+  const baseSpeed=lerp(CONFIG.baseSpeed,CONFIG.maxSpeed,Math.pow(progress,.96))+surge;
   const worldScale=state.focusing?CONFIG.focusSlow:1;
   const speed=baseSpeed*worldScale;
-  const multiplier=1+(state.combo-1)*.14;
-  state.years+=dt*CONFIG.passiveYears*(state.focusing?.72:1);
+  const multiplier=1+(state.combo-1)*.09;
+  state.years+=dt*CONFIG.passiveYears*(state.focusing?.68:1);
 
   let danger=999;
   for(const obstacle of obstacles){
     obstacle.x-=speed*dt;
     if(obstacle.collectible) obstacle.collectible.x-=speed*dt;
     obstacle.phase+=dt*2.2;
-    const top=obstacle.center-obstacle.gap/2;
-    const bottom=obstacle.center+obstacle.gap/2;
+    obstacle.liveCenter=obstacle.center+Math.sin(state.runTime*obstacle.driftSpeed+obstacle.phase)*obstacle.drift;
+    const squeeze=Math.max(0,Math.sin(state.runTime*obstacle.squeezeSpeed+obstacle.phase))*obstacle.squeeze;
+    obstacle.liveGap=clamp(obstacle.gap-squeeze,CONFIG.minGap-10,CONFIG.maxGap);
+    const top=obstacle.liveCenter-obstacle.liveGap/2;
+    const bottom=obstacle.liveCenter+obstacle.liveGap/2;
 
     if(obstacle.collectible && !obstacle.collectible.collected){
       const c=obstacle.collectible;
       c.pulse+=dt*5;
-      const magnet=state.focusing?82:34;
+      c.y += Math.sin(state.runTime*1.8+obstacle.collectibleBob)*dt*10;
+      const magnet=state.focusing?48:18;
       const dx=player.x-c.x,dy=player.y-c.y;
       const distance=Math.hypot(dx,dy);
-      if(state.focusing && distance<magnet){ c.x+=dx*dt*4.8;c.y+=dy*dt*4.8; }
+      if(state.focusing && distance<magnet){ c.x+=dx*dt*3.6;c.y+=dy*dt*3.6; }
       if(distance<player.r+c.r+2){ collect(c); }
     }
 
@@ -1336,7 +1349,7 @@ function update(dt){
   obstacles=obstacles.filter(o=>o.x+o.w>-70);
   while(obstacles.length<5) spawnNext();
 
-  player.mood=danger<34?"worried":(state.focusing?"focused":"calm");
+  player.mood=danger<40?"worried":(state.focusing?"focused":"calm");
   if(player.y-player.r<0 || player.y+player.r>H-CONFIG.floorHeight+2) endGame(false);
 
   if(state.years>=CONFIG.targetYears && !state.ended) endGame(true);
@@ -1347,9 +1360,9 @@ function update(dt){
 }
 
 function evaluatePass(obstacle,multiplier){
-  const offset=Math.abs(player.y-obstacle.center);
-  const perfectWindow=state.focusing?18:13;
-  const preciseWindow=state.focusing?45:36;
+  const offset=Math.abs(player.y-(obstacle.liveCenter ?? obstacle.center));
+  const perfectWindow=state.focusing?12:9;
+  const preciseWindow=state.focusing?27:21;
   state.years+=CONFIG.passYears*multiplier;
 
   if(offset<=perfectWindow){
@@ -1357,7 +1370,7 @@ function evaluatePass(obstacle,multiplier){
     state.combo=Math.min(8,state.combo+1);
     state.bestCombo=Math.max(state.bestCombo,state.combo);
     state.years+=CONFIG.perfectYears*multiplier;
-    showBanner(state.combo>=4?`Cadena maestra ×${state.combo}`:"Paso perfecto",true);
+    showBanner(state.combo>=4?`Racha maestra ×${state.combo}`:"Paso perfecto",true);
     addFloater(state.combo>=3?`PERFECTO ×${state.combo}`:"PERFECTO",player.x+46,player.y-22,palette.aqua);
     rings.push({x:player.x,y:player.y,r:10,life:.65,max:.65,color:palette.aqua});
     sound.perfect(); haptic([14,25,18]);
@@ -1367,11 +1380,11 @@ function evaluatePass(obstacle,multiplier){
     state.combo=Math.min(8,state.combo+1);
     state.bestCombo=Math.max(state.bestCombo,state.combo);
     state.years+=CONFIG.precisionYears*multiplier;
-    showBanner(`Paso preciso · cadena ×${state.combo}`,false);
+    showBanner(`Paso preciso · racha ×${state.combo}`,false);
     addFloater(`PRECISO ×${state.combo}`,player.x+45,player.y-20,palette.gold);
     sound.precise(); haptic(9);
   }else{
-    if(state.combo>1) addFloater("Cadena reiniciada",player.x+48,player.y-18,palette.danger);
+    if(state.combo>1) addFloater("Racha reiniciada",player.x+48,player.y-18,palette.danger);
     state.combo=1;
   }
 }
@@ -1379,7 +1392,7 @@ function evaluatePass(obstacle,multiplier){
 function collect(c){
   c.collected=true;
   state.collected++;
-  state.focus=Math.min(100,state.focus+14);
+  state.focus=Math.min(100,state.focus+8);
   state.years+=CONFIG.collectibleYears*(1+(state.combo-1)*.1);
   addFloater("+ ESENCIA",c.x,c.y-12,palette.bright);
   rings.push({x:c.x,y:c.y,r:7,life:.55,max:.55,color:palette.gold});
@@ -1408,7 +1421,7 @@ function updateHUD(){
   ui.chapterName.textContent=chapters[state.chapter].name;
   ui.progressFill.style.width=(clamp(state.years/CONFIG.targetYears,0,1)*100).toFixed(1)+"%";
   ui.combo.textContent="×"+state.combo;
-  ui.comboLabel.textContent=state.combo===1?"Sin cadena":state.combo>=6?"Cadena excepcional":"Cadena activa";
+  ui.comboLabel.textContent=state.combo===1?"Sin racha":state.combo>=6?"Racha excepcional":"Racha activa";
   ui.comboCard.classList.toggle("hot",state.combo>=3);
   ui.focusFill.style.width=state.focus.toFixed(1)+"%";
   ui.focusWrap.classList.toggle("warning",state.focus<25 || state.focusLocked>0);
@@ -1419,12 +1432,12 @@ function updateHUD(){
 }
 
 function tierName(years){
-  if(years>=24) return "Obra maestra";
-  if(years>=20) return "Madurez excepcional";
-  if(years>=16) return "Profundidad";
-  if(years>=12) return "Carácter";
-  if(years>=8) return "Transformación";
-  if(years>=4) return "Primeros aromas";
+  if(years>=25) return "Legendario";
+  if(years>=21) return "Madurez excepcional";
+  if(years>=17) return "Profundidad";
+  if(years>=13) return "Carácter";
+  if(years>=9) return "Transformación";
+  if(years>=5) return "Primeros aromas";
   return "El origen";
 }
 
@@ -1499,12 +1512,15 @@ function drawBackground(){
   sun.addColorStop(0,"rgba(255,235,170,.82)");sun.addColorStop(.23,"rgba(238,191,102,.24)");sun.addColorStop(1,"rgba(238,191,102,0)");
   ctx.fillStyle=sun;ctx.fillRect(0,0,W,H*.62);
 
+  drawLightRays();
+  mountains(colors[2],H*.35,.26,6);
   mountains(colors[2],H*.38,.46,10);
   mountains(colors[3],H*.50,.63,18);
 
   if(ch===0) drawCoast();
   if(ch===1) drawDistilleryBack();
   if(ch===2) drawCellarBack();
+  drawAtmosphereBands();
 
   const shade=ctx.createLinearGradient(0,0,W,0);
   shade.addColorStop(0,"rgba(7,3,2,.19)");shade.addColorStop(.5,"rgba(7,3,2,0)");shade.addColorStop(1,"rgba(7,3,2,.23)");
@@ -1525,12 +1541,43 @@ function mountains(color,base,alpha,speed){
   }
   ctx.restore();
 }
+function drawLightRays(){
+  ctx.save();
+  const strength=[.16,.12,.10][state.chapter];
+  ctx.globalAlpha=strength;
+  for(let i=0;i<6;i++){
+    const x=W*.10+i*W*.18+Math.sin(state.time*.18+i)*18;
+    const w=50+i*6;
+    const g=ctx.createLinearGradient(x,0,x+w,H*.7);
+    g.addColorStop(0,"rgba(255,240,185,.35)");
+    g.addColorStop(.2,"rgba(255,220,145,.12)");
+    g.addColorStop(1,"rgba(255,220,145,0)");
+    ctx.fillStyle=g;
+    ctx.beginPath();
+    ctx.moveTo(x,0);ctx.lineTo(x+w,0);ctx.lineTo(x+w*2.1,H*.72);ctx.lineTo(x-w*.55,H*.72);ctx.closePath();ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawAtmosphereBands(){
+  ctx.save();
+  const mist=ctx.createLinearGradient(0,H*.42,0,H*.80);
+  if(state.chapter===0){mist.addColorStop(0,"rgba(142,213,198,0)");mist.addColorStop(.55,"rgba(86,161,138,.08)");mist.addColorStop(1,"rgba(13,48,39,.20)");}
+  else if(state.chapter===1){mist.addColorStop(0,"rgba(255,181,92,0)");mist.addColorStop(.58,"rgba(201,108,35,.08)");mist.addColorStop(1,"rgba(40,12,6,.24)");}
+  else {mist.addColorStop(0,"rgba(255,214,153,0)");mist.addColorStop(.58,"rgba(141,85,40,.08)");mist.addColorStop(1,"rgba(14,5,4,.28)");}
+  ctx.fillStyle=mist;ctx.fillRect(0,H*.34,W,H*.46);
+  ctx.restore();
+}
+
 
 function drawCoast(){
   ctx.save();
-  ctx.globalAlpha=.38;ctx.fillStyle="#238d94";ctx.fillRect(0,H*.56,W,H*.16);
+  ctx.globalAlpha=.42;ctx.fillStyle="#238d94";ctx.fillRect(0,H*.56,W,H*.16);
+  const shimmer=ctx.createLinearGradient(0,H*.56,0,H*.72);shimmer.addColorStop(0,"rgba(255,236,184,.18)");shimmer.addColorStop(1,"rgba(255,236,184,0)");ctx.fillStyle=shimmer;ctx.fillRect(0,H*.56,W,H*.10);
   ctx.strokeStyle="rgba(248,237,212,.32)";ctx.lineWidth=1.2;
   for(let y=H*.58;y<H*.69;y+=17){ctx.beginPath();for(let x=-10;x<W+10;x+=18)ctx.lineTo(x,y+Math.sin(x*.032+state.time*1.7+y)*2.5);ctx.stroke()}
+  ctx.globalAlpha=.34;ctx.fillStyle="#274a2d";
+  for(let i=0;i<4;i++){const x=50+i*118-(state.time*8%(W+90));ctx.beginPath();ctx.moveTo(x,H*.55);ctx.lineTo(x+10,H*.45);ctx.lineTo(x+20,H*.55);ctx.fill();ctx.beginPath();ctx.moveTo(x+10,H*.45);ctx.quadraticCurveTo(x-2,H*.47,x-16,H*.43);ctx.quadraticCurveTo(x-4,H*.46,x+10,H*.45);ctx.fill();ctx.beginPath();ctx.moveTo(x+10,H*.45);ctx.quadraticCurveTo(x+24,H*.47,x+37,H*.42);ctx.quadraticCurveTo(x+23,H*.46,x+10,H*.45);ctx.fill();}
   ctx.restore();
 }
 
@@ -1567,7 +1614,8 @@ function drawLeaf(x,y,dir){
 function drawDistilleryBack(){
   ctx.save();ctx.globalAlpha=.30;ctx.fillStyle="#3a180e";ctx.fillRect(0,H*.41,W,H*.23);
   ctx.strokeStyle="rgba(249,221,157,.18)";ctx.lineWidth=2;
-  for(let x=15;x<W;x+=55){ctx.beginPath();ctx.moveTo(x,H*.41);ctx.lineTo(x,H*.64);ctx.stroke()}
+  for(let x=15;x<W;x+=55){ctx.beginPath();ctx.moveTo(x,H*.41);ctx.lineTo(x,H*.64);ctx.stroke();ctx.fillStyle="rgba(255,189,94,.16)";ctx.fillRect(x+8,H*.49+(x%3)*18,14,7);ctx.fillRect(x+28,H*.53+(x%2)*14,12,6);}
+  for(let i=0;i<4;i++){const sx=70+i*108-(state.time*4%40);const sy=H*.38-i*5;const smoke=ctx.createRadialGradient(sx,sy,0,sx,sy,40);smoke.addColorStop(0,"rgba(255,215,150,.12)");smoke.addColorStop(1,"rgba(255,215,150,0)");ctx.fillStyle=smoke;ctx.beginPath();ctx.arc(sx,sy,40,0,Math.PI*2);ctx.fill();}
   ctx.restore();
 }
 
@@ -1580,7 +1628,9 @@ function drawDistilleryFront(){
     const g=ctx.createLinearGradient(x,0,x+70,0);g.addColorStop(0,"#542415");g.addColorStop(.48,"#c47a39");g.addColorStop(1,"#32130b");
     ctx.fillStyle=g;roundedRect(x-10,base-68,76,68,18);ctx.fill();
     ctx.fillStyle="#5d2a17";roundedRect(x+8,base-164,40,108,15);ctx.fill();
+    ctx.fillStyle="rgba(255,200,105,.16)";ctx.fillRect(x+18,base-140,20,12);ctx.fillRect(x+18,base-118,20,12);
     ctx.strokeStyle="rgba(240,191,99,.35)";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x+28,base-164);ctx.bezierCurveTo(x+90,base-190,x+84,base-115,x+135,base-137);ctx.stroke();
+    ctx.strokeStyle="rgba(255,218,148,.12)";ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(x+28,base-164);ctx.bezierCurveTo(x+95,base-183,x+90,base-120,x+136,base-137);ctx.stroke();
   }
   ctx.restore();
 }
@@ -1588,7 +1638,8 @@ function drawDistilleryFront(){
 function drawCellarBack(){
   ctx.save();ctx.globalAlpha=.33;ctx.strokeStyle="rgba(222,180,100,.18)";ctx.lineWidth=2;
   for(let y=H*.30;y<H-CONFIG.floorHeight;y+=34){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y+Math.sin(y*.2)*5);ctx.stroke()}
-  for(let x=20;x<W;x+=86){ctx.beginPath();ctx.moveTo(x,H*.29);ctx.lineTo(x,H-CONFIG.floorHeight);ctx.stroke()}
+  for(let x=20;x<W;x+=86){ctx.beginPath();ctx.moveTo(x,H*.29);ctx.lineTo(x,H-CONFIG.floorHeight);ctx.stroke();}
+  for(let i=0;i<4;i++){const lx=56+i*105;const lamp=ctx.createRadialGradient(lx,H*.24,0,lx,H*.24,56);lamp.addColorStop(0,"rgba(255,214,142,.24)");lamp.addColorStop(1,"rgba(255,214,142,0)");ctx.fillStyle=lamp;ctx.beginPath();ctx.arc(lx,H*.24,56,0,Math.PI*2);ctx.fill();ctx.fillStyle="rgba(255,220,168,.4)";ctx.fillRect(lx-2,H*.18,4,24);ctx.beginPath();ctx.arc(lx,H*.18,7,0,Math.PI*2);ctx.fill();}
   ctx.restore();
 }
 
@@ -1596,7 +1647,7 @@ function drawBarrelRows(){
   const base=H-CONFIG.floorHeight-11;
   const off=(state.time*21)%116;
   ctx.save();
-  for(let x=-off-80;x<W+120;x+=116){drawSmallBarrel(x,base-54,.68);drawSmallBarrel(x+37,base-103,.46)}
+  for(let x=-off-80;x<W+120;x+=116){drawSmallBarrel(x,base-54,.74);drawSmallBarrel(x+37,base-103,.50);drawSmallBarrel(x+72,base-148,.28)}
   ctx.restore();
 }
 
@@ -1609,8 +1660,10 @@ function drawSmallBarrel(x,y,a){
 
 function drawObstacles(){
   for(const o of obstacles){
-    const top=o.center-o.gap/2;
-    const bottom=o.center+o.gap/2;
+    const liveCenter=o.liveCenter ?? o.center;
+    const liveGap=o.liveGap ?? o.gap;
+    const top=liveCenter-liveGap/2;
+    const bottom=liveCenter+liveGap/2;
     drawSegment(o,o.x,-16,o.w,top+16,true);
     drawSegment(o,o.x,bottom,o.w,H-CONFIG.floorHeight-bottom+20,false);
   }
@@ -1623,6 +1676,7 @@ function drawSegment(o,x,y,w,h,isTop){
   else if(o.chapter===2){g.addColorStop(0,"#1b0b06");g.addColorStop(.48,"#71401f");g.addColorStop(1,"#160804");}
   else {g.addColorStop(0,"#3a190d");g.addColorStop(.48,"#8b4d22");g.addColorStop(1,"#291007");}
   ctx.fillStyle=g;roundedRect(x,y,w,h,16);ctx.fill();
+  const sheen=ctx.createLinearGradient(x,y,x+w,y+h);sheen.addColorStop(0,"rgba(255,243,214,.18)");sheen.addColorStop(.28,"rgba(255,243,214,.06)");sheen.addColorStop(1,"rgba(0,0,0,0)");ctx.fillStyle=sheen;roundedRect(x+2,y+2,w-4,Math.max(14,h*.45),14);ctx.fill();
   ctx.strokeStyle="rgba(244,207,130,.20)";ctx.lineWidth=1.7;
   for(let i=1;i<5;i++){const xx=x+i*w/5;ctx.beginPath();ctx.moveTo(xx,y+8);ctx.lineTo(xx+Math.sin(o.phase+i)*2,y+h-8);ctx.stroke()}
   ctx.fillStyle="rgba(28,12,6,.40)";ctx.fillRect(x,isTop?y+h-15:y,w,15);
@@ -1636,7 +1690,7 @@ function drawCollectibles(){
     if(!c || c.collected) continue;
     const pulse=1+Math.sin(c.pulse)*.12;
     ctx.save();ctx.translate(c.x,c.y);ctx.scale(pulse,pulse);
-    const glow=ctx.createRadialGradient(0,0,0,0,0,25);glow.addColorStop(0,"rgba(255,232,166,.48)");glow.addColorStop(1,"rgba(255,232,166,0)");ctx.fillStyle=glow;ctx.beginPath();ctx.arc(0,0,25,0,Math.PI*2);ctx.fill();
+    const glow=ctx.createRadialGradient(0,0,0,0,0,28);glow.addColorStop(0,"rgba(255,232,166,.58)");glow.addColorStop(.55,"rgba(255,210,120,.16)");glow.addColorStop(1,"rgba(255,232,166,0)");ctx.fillStyle=glow;ctx.beginPath();ctx.arc(0,0,25,0,Math.PI*2);ctx.fill();
     ctx.rotate(-.38);ctx.fillStyle=palette.bright;ctx.shadowBlur=14;ctx.shadowColor=palette.gold;
     ctx.beginPath();ctx.moveTo(0,-9);ctx.bezierCurveTo(8,-2,8,7,0,10);ctx.bezierCurveTo(-8,7,-8,-2,0,-9);ctx.fill();
     ctx.shadowBlur=0;ctx.fillStyle="rgba(255,255,255,.55)";ctx.beginPath();ctx.ellipse(-2,-3,2,3,-.3,0,Math.PI*2);ctx.fill();ctx.restore();
@@ -1649,8 +1703,9 @@ function drawFocusGuide(){
   if(!next) return;
   ctx.save();ctx.globalAlpha=.13*state.focusGlow;
   const g=ctx.createLinearGradient(player.x,0,next.x,0);g.addColorStop(0,"rgba(119,226,220,0)");g.addColorStop(.65,"rgba(119,226,220,.75)");g.addColorStop(1,"rgba(119,226,220,0)");
-  ctx.strokeStyle=g;ctx.lineWidth=2;ctx.setLineDash([6,9]);ctx.beginPath();ctx.moveTo(player.x+24,player.y);ctx.quadraticCurveTo((player.x+next.x)/2,next.center,next.x+next.w/2,next.center);ctx.stroke();
-  ctx.setLineDash([]);ctx.globalAlpha=.20*state.focusGlow;ctx.strokeStyle=palette.aqua;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(next.x+next.w/2,next.center,15+Math.sin(state.time*5)*2,0,Math.PI*2);ctx.stroke();ctx.restore();
+  const targetY=next.liveCenter ?? next.center;
+  ctx.strokeStyle=g;ctx.lineWidth=2;ctx.setLineDash([6,9]);ctx.beginPath();ctx.moveTo(player.x+24,player.y);ctx.quadraticCurveTo((player.x+next.x)/2,targetY,next.x+next.w/2,targetY);ctx.stroke();
+  ctx.setLineDash([]);ctx.globalAlpha=.20*state.focusGlow;ctx.strokeStyle=palette.aqua;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(next.x+next.w/2,targetY,15+Math.sin(state.time*5)*2,0,Math.PI*2);ctx.stroke();ctx.restore();
 }
 
 function drawTrail(){
@@ -1720,13 +1775,15 @@ function drawParticles(){
 
 function drawForeground(){
   const y=H-CONFIG.floorHeight;const g=ctx.createLinearGradient(0,y,0,H);g.addColorStop(0,"#4a2412");g.addColorStop(1,"#090302");ctx.fillStyle=g;ctx.fillRect(0,y,W,CONFIG.floorHeight);ctx.fillStyle="rgba(248,237,212,.10)";ctx.fillRect(0,y,W,2);
+  const rim=ctx.createLinearGradient(0,y,0,H);rim.addColorStop(0,"rgba(255,219,145,.14)");rim.addColorStop(.3,"rgba(255,219,145,0)");rim.addColorStop(1,"rgba(0,0,0,0)");ctx.fillStyle=rim;ctx.fillRect(0,y,W,34);
   ctx.save();ctx.globalAlpha=.038;ctx.fillStyle=palette.gold;ctx.textAlign="center";ctx.font="900 40px Georgia";const off=(state.time*12)%185;for(let yy=210-off;yy<H;yy+=185){ctx.fillText("RC",W*.5,yy);ctx.font="900 12px Arial";ctx.fillText("RON CARÚPANO",W*.5,yy+23);ctx.font="900 40px Georgia"}ctx.restore();
 }
 
 function drawScreenEffects(){
-  if(state.focusing){ctx.save();ctx.globalAlpha=.055*state.focusGlow;ctx.fillStyle=palette.aqua;ctx.fillRect(0,0,W,H);ctx.restore()}
+  if(state.focusing){ctx.save();ctx.globalAlpha=.065*state.focusGlow;ctx.fillStyle=palette.aqua;ctx.fillRect(0,0,W,H);ctx.restore()}
   if(state.flash>0){ctx.save();ctx.globalAlpha=state.flash*.28;ctx.fillStyle=palette.bright;ctx.fillRect(0,0,W,H);ctx.restore()}
-  const vignette=ctx.createRadialGradient(W/2,H*.46,Math.min(W,H)*.18,W/2,H*.46,Math.max(W,H)*.72);vignette.addColorStop(0,"rgba(0,0,0,0)");vignette.addColorStop(1,`rgba(5,2,1,${.25+state.vignette*.35})`);ctx.fillStyle=vignette;ctx.fillRect(0,0,W,H);
+  const edge=ctx.createLinearGradient(0,0,W,0);edge.addColorStop(0,"rgba(217,179,95,.10)");edge.addColorStop(.08,"rgba(217,179,95,0)");edge.addColorStop(.92,"rgba(217,179,95,0)");edge.addColorStop(1,"rgba(217,179,95,.10)");ctx.fillStyle=edge;ctx.fillRect(0,0,W,H);
+  const vignette=ctx.createRadialGradient(W/2,H*.46,Math.min(W,H)*.18,W/2,H*.46,Math.max(W,H)*.72);vignette.addColorStop(0,"rgba(0,0,0,0)");vignette.addColorStop(1,`rgba(5,2,1,${.27+state.vignette*.38})`);ctx.fillStyle=vignette;ctx.fillRect(0,0,W,H);
 }
 
 // ---------- Helpers ----------
